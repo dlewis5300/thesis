@@ -45,10 +45,10 @@ class ChatViewController: UIViewController, UITableViewDataSource, UITableViewDe
     
     // Generate Bot Response
     func generateBotResponse(for userMessage: String) {
-        let apiKey = "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"
+        let apiKey = " api key "
         let endpoint = "https://api.sentiment-analysis.com/analyze"
         
-        let parameters: [String: Any] = ["text": userMessage, "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": apiKey]
+        let parameters: [String: Any] = ["text": userMessage, " api key ": apiKey]
         
         AF.request(endpoint, method: .post, parameters: parameters, encoding: URLEncoding.default)
             .validate()
