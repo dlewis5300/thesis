@@ -1,5 +1,5 @@
 //  D'Mitri Lewis
-//  ChatTestApp.swift
+//  EnerGizeApp.swift
 
 
 import SwiftUI
