@@ -77,6 +77,4 @@ class ChatViewController: UIViewController, UITableViewDataSource, UITableViewDe
         let errorMessage = "Bot: I'm not sure how to respond to that."
         addMessage(errorMessage)
     }
-    
-    // ... Additional Code and Methods ...
 }
