@@ -1,13 +1,20 @@
-//  D'Mitri Lewis
+//
 //  ContentView.swift
-
+//  EnerGize5
+//
+//  Created by D'Mitri Lewis on 4/20/24.
+//
 
 import SwiftUI
 
 struct ContentView: View {
-    @State private var messageText = ""
-    @State var messages: [String] = ["Welcome to EnerGize 2.0!"]
-    
+    @ObservedObject var viewModel: ChatViewModel
+
+    // Initialization with dependency injection
+    init(viewModel: ChatViewModel) {
+        self.viewModel = viewModel
+    }
+
     var body: some View {
         VStack {
             HStack {
@@ -16,82 +23,49 @@ struct ContentView: View {
                     .bold()
                 
                 Image(systemName: "bubble.left.fill")
-                    .font(.system(size: 26))
+                    .font(.system(size: 28))
                     .foregroundColor(Color.blue)
             }
-            .padding(.bottom)
             
             ScrollView {
-                VStack(alignment: .leading, spacing: 10) {
-                    ForEach(messages, id: \.self) { message in
-                        // Adjust alignment and style based on whether it's a user or bot message
-                        if message.contains("[USER]") {
-                            let userMessage = message.replacingOccurrences(of: "[USER]", with: "")
-                            HStack {
-                                Spacer()
-                                Text(userMessage)
-                                    .padding()
-                                    .foregroundColor(Color.white)
-                                    .background(Color.blue.opacity(0.8))
-                                    .cornerRadius(10)
-                            }
-                        } else {
-                            HStack {
-                                Text(message)
-                                    .padding()
-                                    .background(Color.gray.opacity(0.15))
-                                    .cornerRadius(10)
-                                Spacer()
-                            }
-                        }
+                VStack(spacing: 12) {
+                    ForEach(viewModel.messages, id: \.self) { message in
+                        Text(message)
+                            .padding()
+                            .background(message.contains("[USER]") ? Color.blue : Color.gray)
+                            .foregroundColor(.white)
+                            .cornerRadius(10)
+                            .frame(maxWidth: .infinity, alignment: message.contains("[USER]") ? .trailing : .leading)
                     }
                 }
-                .padding(.horizontal)
             }
-            
-            // Message bar at the bottom
+            .background(Color.gray.opacity(0.1))
+
             HStack {
-                TextField("Type something", text: $messageText)
+                TextField("Type a message...", text: $viewModel.messageText)
                     .textFieldStyle(RoundedBorderTextFieldStyle())
-                    .padding()
-                
+                    .frame(minHeight: 44) // Ensures adequate touch target size
+
                 Button(action: {
-                    sendMessage(message: messageText)
+                    viewModel.sendMessage() // Assuming sendMessage does not need parameters
+                    viewModel.messageText = "" // Clear the text field after sending
                 }) {
-                    Image(systemName: "paperplane.fill")
-                        .font(.system(size: 26))
+                    Image(systemName: "paperplane.fill") // Using an icon for the button
+                        .font(.system(size: 22)) // Set the size of the icon
+                        .foregroundColor(.blue) // Set the color of the icon
                 }
-                .buttonStyle(BorderlessButtonStyle())
-                .padding(.horizontal, 10)
+                .buttonStyle(PlainButtonStyle()) // Styling the button
+                .padding(.horizontal) // Adding some horizontal padding
             }
-            .padding(.horizontal)
+            .padding() // Padding around the entire HStack
+
         }
-        .padding()
-    }
-    
-    func sendMessage(message: String) {
-        withAnimation {
-            messages.append("[USER]\(message)")
-            self.messageText = "" // Clear the text field after sending
-            
-            DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
-                withAnimation {
-                    // Here, add your logic for generating the bot's response
-                    messages.append(getBotResponse(message: message))
-                }
-            }
-        }
-    }
-    
-    func getBotResponse(message: String) -> String {
-        // This is a placeholder for your response logic
-        // Return a dynamic response based on the message
-        return "Echo: \(message)" // Example response
     }
 }
 
+// Ensure the preview uses a default instance of the viewModel
 struct ContentView_Previews: PreviewProvider {
     static var previews: some View {
-        ContentView()
+        ContentView(viewModel: ChatViewModel())
     }
 }
