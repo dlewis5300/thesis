@@ -13,7 +13,7 @@ struct ChatTestApp: App {
 
     var body: some Scene {
         WindowGroup {
-            ContentView(viewModel: chatViewModel)  // Correct instantiation
+            ContentView(viewModel: chatViewModel)
         }
     }
 }
